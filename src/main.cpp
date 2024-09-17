@@ -9,6 +9,7 @@ float Rand();
 
 void InsertionSort(std::vector<float> &v);
 void SelectionSort(std::vector<float> &v);
+void BubbleSort(std::vector<float> &v);
 
 void Print(const std::vector<float> &v) {
     for (auto x : v) {
@@ -53,6 +54,22 @@ void SelectionSort(std::vector<float> &v) {
     }
 }
 
+void BubbleSort(std::vector<float> &v) {
+    bool swapped = false;
+    for (size_t i = 0; i < v.size() - 1; i++) {
+        swapped = false;
+        for (size_t j = v.size() - 1; j > i; j--) {
+            if (v[j] < v[j - 1]) {
+                std::swap(v[j], v[j - 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) {
+            break;
+        }
+    }
+}
+
 int main(int argc, char **argv) {
     srand(time(NULL));
 
@@ -68,8 +85,9 @@ int main(int argc, char **argv) {
 
 #if 0
     InsertionSort(v);
-#endif
     SelectionSort(v);
+#endif
+    BubbleSort(v);
 
     Print(v);
 
