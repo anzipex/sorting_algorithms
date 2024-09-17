@@ -10,6 +10,7 @@ float Rand();
 void InsertionSort(std::vector<float> &v);
 void SelectionSort(std::vector<float> &v);
 void BubbleSort(std::vector<float> &v);
+void ShellSort(std::vector<float> &v);
 
 void Print(const std::vector<float> &v) {
     for (auto x : v) {
@@ -70,6 +71,28 @@ void BubbleSort(std::vector<float> &v) {
     }
 }
 
+void ShellSort(std::vector<float> &v) {
+    float h = 1;
+    while (h < v.size()) {
+        h = 3 * h + 1;
+    }
+
+    while (h > 0) {
+        h = h / 3;
+
+        for (size_t k = h; k < v.size(); k++) {
+            float temp = v[k];
+            float j = k;
+
+            while (j >= h && v[j - h] > temp) {
+                v[j] = v[j - h];
+                j -= h;
+            }
+            v[j] = temp;
+        }
+    }
+}
+
 int main(int argc, char **argv) {
     srand(time(NULL));
 
@@ -86,8 +109,9 @@ int main(int argc, char **argv) {
 #if 0
     InsertionSort(v);
     SelectionSort(v);
-#endif
     BubbleSort(v);
+#endif
+    ShellSort(v);
 
     Print(v);
 
