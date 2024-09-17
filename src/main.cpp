@@ -11,6 +11,10 @@ void InsertionSort(std::vector<float> &v);
 void SelectionSort(std::vector<float> &v);
 void BubbleSort(std::vector<float> &v);
 void ShellSort(std::vector<float> &v);
+// =============================================================
+void MergeSort(std::vector<float> &v, uint64_t left, uint64_t right);
+void Merge(std::vector<float> &v, uint64_t left, uint64_t mid, uint64_t right);
+// =============================================================
 
 void Print(const std::vector<float> &v) {
     for (auto x : v) {
@@ -93,6 +97,37 @@ void ShellSort(std::vector<float> &v) {
     }
 }
 
+void MergeSort(std::vector<float> &v, uint64_t left, uint64_t right) {
+    if (left < right) {
+        uint64_t mid = left + (right - left) / 2;
+
+        MergeSort(v, left, mid);
+        MergeSort(v, mid + 1, right);
+
+        Merge(v, left, mid, right);
+    }
+}
+
+void Merge(std::vector<float> &v, uint64_t left, uint64_t mid, uint64_t right) {
+    std::vector<float> temp(v.begin() + left, v.begin() + mid + 1);
+
+    size_t i = 0;
+    uint64_t j = mid + 1;
+    uint64_t k = left;
+
+    while (i < temp.size() && j <= right) {
+        if (v[j] < temp[i]) {
+            v[k++] = v[j++];
+        } else {
+            v[k++] = temp[i++];
+        }
+    }
+
+    while (i < temp.size()) {
+        v[k++] = temp[i++];
+    }
+}
+
 int main(int argc, char **argv) {
     srand(time(NULL));
 
@@ -110,8 +145,9 @@ int main(int argc, char **argv) {
     InsertionSort(v);
     SelectionSort(v);
     BubbleSort(v);
-#endif
     ShellSort(v);
+#endif
+    MergeSort(v, 0, v.size() - 1);
 
     Print(v);
 
