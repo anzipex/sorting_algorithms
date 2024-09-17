@@ -109,7 +109,8 @@ void MergeSort(std::vector<float> &v, uint64_t left, uint64_t right) {
 }
 
 void Merge(std::vector<float> &v, uint64_t left, uint64_t mid, uint64_t right) {
-    std::vector<float> temp(v.begin() + left, v.begin() + mid + 1);
+    using DiffType = std::vector<float>::difference_type;
+    std::vector<float> temp(v.begin() + static_cast<DiffType>(left), v.begin() + static_cast<DiffType>(mid + 1));
 
     size_t i = 0;
     uint64_t j = mid + 1;
