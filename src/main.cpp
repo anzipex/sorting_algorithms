@@ -4,6 +4,7 @@
 #include <algorithm>
 
 void Print(const std::vector<float> &v);
+void FillVectorManual(std::vector<float> &v, const int &n, char **argv);
 void FillVectorRand(std::vector<float> &v, const size_t &n);
 float Rand();
 
@@ -24,6 +25,12 @@ void Print(const std::vector<float> &v) {
         std::cout << x << " ";
     }
     std::cout << '\n';
+}
+
+void FillVectorManual(std::vector<float> &v, const int &n, char **argv) {
+    for (int i = 1; i <= n; i++) {
+        v.push_back(std::stof(argv[i]));
+    }
 }
 
 void FillVectorRand(std::vector<float> &v, const size_t &n) {
@@ -160,14 +167,17 @@ void Sink(std::vector<float> &v, int i, int n) {
 int main(int argc, char **argv) {
     srand(time(NULL));
 
-    if (argc != 2) {
+    const int minArgs = 2;
+    if (argc < 2 || std::stof(argv[1]) < 0) {
         return 1;
     }
 
-    const size_t n = std::stoi(argv[1]);
-
     std::vector<float> v;
-    FillVectorRand(v, n);
+    if (argc == minArgs) {
+        FillVectorRand(v, std::stoi(argv[1]));
+    } else {
+        FillVectorManual(v, argc - 1, argv);
+    }
     Print(v);
 
 #if 0
