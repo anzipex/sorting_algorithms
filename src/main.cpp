@@ -15,6 +15,9 @@ void ShellSort(std::vector<float> &v);
 void MergeSort(std::vector<float> &v, uint64_t left, uint64_t right);
 void Merge(std::vector<float> &v, uint64_t left, uint64_t mid, uint64_t right);
 // =============================================================
+void HeapSort(std::vector<float> &v);
+void Sink(std::vector<float> &v, int i, int n);
+// =============================================================
 
 void Print(const std::vector<float> &v) {
     for (auto x : v) {
@@ -129,6 +132,31 @@ void Merge(std::vector<float> &v, uint64_t left, uint64_t mid, uint64_t right) {
     }
 }
 
+void HeapSort(std::vector<float> &v) {
+    int n = v.size();
+
+    // Фаза создания кучи (heapify)
+    for (int i = n / 2; i >= 1; --i) {
+        Sink(v, i, n); // утопить элементы начиная с середины
+    }
+
+    // фаза сортировки (sortdown)
+    for (int i = 1; i <= n; ++i) {
+        std::swap(v[0], v[n - i]); // поменять корневой элемент с последним
+        Sink(v, 1, n - i); // утопить корневой элемент, чтобы восстановить структуру кучи
+    }
+}
+
+void Sink(std::vector<float> &v, int i, int n) {
+    int lc = 2 * i; // левый ребенок
+    if (lc > n) return; // нет детей
+    int rc = lc + 1; // правый ребенок
+    int mc = (rc > n) ? lc : (v[lc - 1] > v[rc - 1]) ? lc : rc; // индекс наибольшего ребенка
+    if (v[i - 1] >= v[mc - 1]) return; // если элемент больше или равен наибольшему ребенку, завершить
+    std::swap(v[i - 1], v[mc - 1]); // поменять местами текущий элемент с наибольшим ребенком
+    Sink(v, mc, n); // рекурсивно утопить следующий элемент
+}
+
 int main(int argc, char **argv) {
     srand(time(NULL));
 
@@ -147,8 +175,9 @@ int main(int argc, char **argv) {
     SelectionSort(v);
     BubbleSort(v);
     ShellSort(v);
-#endif
     MergeSort(v, 0, v.size() - 1);
+#endif
+    HeapSort(v);
 
     Print(v);
 
