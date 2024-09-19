@@ -19,6 +19,7 @@ void Merge(std::vector<float> &v, uint64_t left, uint64_t mid, uint64_t right);
 void HeapSort(std::vector<float> &v);
 void Sink(std::vector<float> &v, size_t i, size_t n);
 // =============================================================
+void QuickSort(std::vector<float> &v, int left, int right);
 
 void Print(const std::vector<float> &v) {
     for (auto x : v) {
@@ -166,6 +167,30 @@ void Sink(std::vector<float> &v, size_t i, size_t n) {
     Sink(v, mc, n);
 }
 
+void QuickSort(std::vector<float> &v, int left, int right) {
+    if (left > right) {
+        return;
+    }
+
+    float p = v[(left + right) / 2];
+
+    int i = left;
+    int j = right;
+
+    while (i <= j) {
+        while (v[i] < p) i++;
+        while (v[j] > p) j--;
+
+        if (i <= j) {
+            std::swap(v[i], v[j]);
+            i++;
+            j--;
+        }
+    }
+    QuickSort(v, left, j);
+    QuickSort(v, i, right);
+}
+
 int main(int argc, char **argv) {
     srand(time(NULL));
 
@@ -188,8 +213,9 @@ int main(int argc, char **argv) {
     BubbleSort(v);
     ShellSort(v);
     MergeSort(v, 0, v.size() - 1);
-#endif
     HeapSort(v);
+#endif
+    QuickSort(v, 0, static_cast<int>(v.size() - 1));
 
     Print(v);
 
