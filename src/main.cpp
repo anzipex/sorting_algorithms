@@ -249,6 +249,11 @@ int main(int argc, char **argv) {
     } else {
         FillVectorManual(v, argc - 1, argv);
     }
+
+    if (v.empty()) {
+        return 1;
+    }
+
     Print(v);
 
     PerformSort("InsertionSort", v, InsertionSort);
