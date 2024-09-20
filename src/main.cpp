@@ -66,7 +66,7 @@ void PerformSort(const std::string &sortName, const std::vector<float> &v,
 
     const bool sorted = std::is_sorted(tmpV.begin(), tmpV.end());
     if (!sorted) {
-        std::cout << "Error! " << sortName << " is unsorted" << ":\n";
+        std::cout << "Error! " << sortName << " is unsorted!" << "\n";
     } else {
         Print(tmpV);
     }
@@ -81,17 +81,15 @@ void InsertionSort(std::vector<float> &v) {
 }
 
 void SelectionSort(std::vector<float> &v) {
-    bool swapped = false;
     for (size_t i = 0; i < v.size() - 1; ++i) {
-        swapped = false;
+        size_t minIndex = i;
         for (size_t j = i + 1; j < v.size(); ++j) {
-            if (v[j] < v[i]) {
-                std::swap(v[j], v[i]);
-                swapped = true;
+            if (v[j] < v[minIndex]) {
+                minIndex = j;
             }
         }
-        if (!swapped) {
-            break;
+        if (minIndex != i) {
+            std::swap(v[i], v[minIndex]);
         }
     }
 }
