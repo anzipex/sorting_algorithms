@@ -220,7 +220,9 @@ void QuickSort3Way(std::vector<float> &v, int left, int right) {
     std::swap(v[left], v[left + rand() % (right - left + 1)]);
     const float pivot = v[left];
 
-    int lt = left, i = left + 1, gt = right;
+    int lt = left;
+    int i = left + 1;
+    int gt = right;
 
     while (i <= gt) {
         if (v[i] < pivot) {
