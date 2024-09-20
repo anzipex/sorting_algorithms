@@ -18,8 +18,8 @@ void SelectionSort(std::vector<float> &v);
 void BubbleSort(std::vector<float> &v);
 void ShellSort(std::vector<float> &v);
 // =============================================================
-void MergeSort(std::vector<float> &v, uint64_t left, uint64_t right);
-void Merge(std::vector<float> &v, uint64_t left, uint64_t mid, uint64_t right);
+void MergeSort(std::vector<float> &v, int left, int right);
+void Merge(std::vector<float> &v, int left, int mid, int right);
 // =============================================================
 void HeapSort(std::vector<float> &v);
 void Sink(std::vector<float> &v, size_t i, size_t n);
@@ -58,19 +58,24 @@ void PerformSort(const std::string &sortName, const std::vector<float> &v,
         void (*sortFunc)(std::vector<float> &)) {
     std::vector<float> tmpV = v;
     std::cout << sortName << ":\n";
+
     const clock_t t1 = clock();
     sortFunc(tmpV);
     const clock_t t2 = clock();
     PrintClockDiff(t1, t2);
-    //Print(tmpV);
+
+    const bool sorted = std::is_sorted(tmpV.begin(), tmpV.end());
+    if (!sorted) {
+        std::cout << "Error! " << sortName << " is unsorted" << ":\n";
+    } else {
+        Print(tmpV);
+    }
 }
 
 void InsertionSort(std::vector<float> &v) {
     for (size_t i = 1; i < v.size(); i++) {
         for (size_t j = i; j > 0 && v[j] < v[j - 1]; j--) {
-            float temp = v[j];
-            v[j] = v[j - 1];
-            v[j - 1] = temp;
+            std::swap(v[j], v[j - 1]);
         }
     }
 }
@@ -108,17 +113,15 @@ void BubbleSort(std::vector<float> &v) {
 }
 
 void ShellSort(std::vector<float> &v) {
-    float h = 1;
-    while (h < v.size()) {
-        h = 3 * h + 1;
+    size_t h = 1;
+    while (h < v.size() / 3) {
+        h = 3 * h + 1; // последовательность Кнута
     }
 
-    while (h > 0) {
-        h = h / 3;
-
-        for (size_t k = h; k < v.size(); k++) {
-            float temp = v[k];
-            float j = k;
+    while (h >= 1) {
+        for (size_t i = h; i < v.size(); i++) {
+            float temp = v[i];
+            float j = i;
 
             while (j >= h && v[j - h] > temp) {
                 v[j] = v[j - h];
@@ -126,12 +129,13 @@ void ShellSort(std::vector<float> &v) {
             }
             v[j] = temp;
         }
+        h /= 3;
     }
 }
 
-void MergeSort(std::vector<float> &v, uint64_t left, uint64_t right) {
+void MergeSort(std::vector<float> &v, int left, int right) {
     if (left < right) {
-        uint64_t mid = left + (right - left) / 2;
+        int mid = left + (right - left) / 2;
 
         MergeSort(v, left, mid);
         MergeSort(v, mid + 1, right);
@@ -140,13 +144,12 @@ void MergeSort(std::vector<float> &v, uint64_t left, uint64_t right) {
     }
 }
 
-void Merge(std::vector<float> &v, uint64_t left, uint64_t mid, uint64_t right) {
-    using DiffType = std::vector<float>::difference_type;
-    std::vector<float> temp(v.begin() + static_cast<DiffType>(left), v.begin() + static_cast<DiffType>(mid + 1));
+void Merge(std::vector<float> &v, int left, int mid, int right) {
+    std::vector<float> temp(v.begin() + left, v.begin() + mid + 1);
 
     size_t i = 0;
-    uint64_t j = mid + 1;
-    uint64_t k = left;
+    int j = mid + 1;
+    int k = left;
 
     while (i < temp.size() && j <= right) {
         if (v[j] < temp[i]) {
@@ -199,8 +202,12 @@ void QuickSort(std::vector<float> &v, int left, int right) {
     int j = right;
 
     while (i <= j) {
-        while (v[i] < p) i++;
-        while (v[j] > p) j--;
+        while (v[i] < p) {
+            i++;
+        }
+        while (v[j] > p) {
+            j--;
+        }
 
         if (i <= j) {
             std::swap(v[i], v[j]);
@@ -257,7 +264,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    //Print(v);
+    Print(v);
 
     PerformSort("InsertionSort", v, InsertionSort);
     PerformSort("SelectionSort", v, SelectionSort);
