@@ -9,6 +9,9 @@ void FillVectorManual(std::vector<float> &v, const int &n, char **argv);
 void FillVectorRand(std::vector<float> &v, const size_t &n);
 float Rand();
 
+void PerformSort(const std::string &sortName, std::vector<float> &v,
+        void (*sortFunc)(std::vector<float> &));
+
 void InsertionSort(std::vector<float> &v);
 void SelectionSort(std::vector<float> &v);
 void BubbleSort(std::vector<float> &v);
@@ -44,6 +47,14 @@ void FillVectorRand(std::vector<float> &v, const size_t &n) {
 
 float Rand() {
     return static_cast<float>(rand()) / static_cast<float>(rand());
+}
+
+void PerformSort(const std::string &sortName, std::vector<float> &v,
+        void (*sortFunc)(std::vector<float> &)) {
+    std::vector<float> tmpV = v;
+    std::cout << sortName << ":\n";
+    sortFunc(tmpV);
+    Print(tmpV);
 }
 
 void InsertionSort(std::vector<float> &v) {
@@ -228,7 +239,7 @@ int main(int argc, char **argv) {
     srand(time(NULL));
 
     const int minArgs = 2;
-    if (argc < 2 || std::stof(argv[1]) < 0) {
+    if (argc < minArgs || std::stof(argv[1]) < 0) {
         return 1;
     }
 
@@ -240,18 +251,15 @@ int main(int argc, char **argv) {
     }
     Print(v);
 
-#if 0
-    InsertionSort(v);
-    SelectionSort(v);
-    BubbleSort(v);
-    ShellSort(v);
-    MergeSort(v, 0, v.size() - 1);
-    HeapSort(v);
-    QuickSort(v, 0, static_cast<int>(v.size() - 1));
-#endif
-    QuickSort3Way(v, 0, static_cast<int>(v.size() - 1));
-
-    Print(v);
+    PerformSort("InsertionSort", v, InsertionSort);
+    PerformSort("SelectionSort", v, SelectionSort);
+    PerformSort("BubbleSort", v, BubbleSort);
+    PerformSort("ShellSort", v, ShellSort);
+    PerformSort("MergeSort", v, [](std::vector<float> &v) { MergeSort(v, 0, v.size() - 1); });
+    PerformSort("HeapSort", v, HeapSort);
+    PerformSort("QuickSort", v, [](std::vector<float> &v) { QuickSort(v, 0, v.size() - 1); });
+    PerformSort("QuickSort3Way", v,
+            [](std::vector<float> &v) { QuickSort3Way(v, 0, v.size() - 1); });
 
     return 0;
 }
