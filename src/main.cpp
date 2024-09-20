@@ -5,6 +5,7 @@
 #include <algorithm>
 
 void Print(const std::vector<float> &v);
+void PrintClockDiff(clock_t tStart, clock_t tStop);
 void FillVectorManual(std::vector<float> &v, const int &n, char **argv);
 void FillVectorRand(std::vector<float> &v, const size_t &n);
 float Rand();
@@ -33,6 +34,10 @@ void Print(const std::vector<float> &v) {
     std::cout << '\n';
 }
 
+void PrintClockDiff(clock_t tStart, clock_t tStop) {
+    std::cout << "clock diff = " << tStop - tStart << '\n';
+}
+
 void FillVectorManual(std::vector<float> &v, const int &n, char **argv) {
     for (int i = 1; i <= n; i++) {
         v.push_back(std::stof(argv[i]));
@@ -53,8 +58,11 @@ void PerformSort(const std::string &sortName, const std::vector<float> &v,
         void (*sortFunc)(std::vector<float> &)) {
     std::vector<float> tmpV = v;
     std::cout << sortName << ":\n";
+    const clock_t t1 = clock();
     sortFunc(tmpV);
-    Print(tmpV);
+    const clock_t t2 = clock();
+    PrintClockDiff(t1, t2);
+    //Print(tmpV);
 }
 
 void InsertionSort(std::vector<float> &v) {
@@ -254,7 +262,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    Print(v);
+    //Print(v);
 
     PerformSort("InsertionSort", v, InsertionSort);
     PerformSort("SelectionSort", v, SelectionSort);
