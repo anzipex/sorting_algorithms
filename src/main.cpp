@@ -67,9 +67,9 @@ void PerformSort(const std::string &sortName, const std::vector<float> &v,
     const bool sorted = std::is_sorted(tmpV.begin(), tmpV.end());
     if (!sorted) {
         std::cout << "Error! " << sortName << " is unsorted!" << "\n";
-    } else {
-        Print(tmpV);
     }
+
+    //Print(tmpV);
 }
 
 void InsertionSort(std::vector<float> &v) {
@@ -262,7 +262,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    Print(v);
+    //Print(v);
 
     PerformSort("InsertionSort", v, InsertionSort);
     PerformSort("SelectionSort", v, SelectionSort);
