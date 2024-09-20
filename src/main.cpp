@@ -1,8 +1,10 @@
 #include <iostream>
+#include <map>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <string>
 
 void Print(const std::vector<float> &v);
 void PrintClockDiff(clock_t tStart, clock_t tStop);
@@ -27,6 +29,11 @@ void Sink(std::vector<float> &v, size_t i, size_t n);
 void QuickSort(std::vector<float> &v, int left, int right);
 void QuickSort3Way(std::vector<float> &v, int left, int right);
 
+namespace {
+std::string currentSort = "";
+std::map<std::string, clock_t> mClocks;
+}
+
 void Print(const std::vector<float> &v) {
     for (auto x : v) {
         std::cout << x << " ";
@@ -36,6 +43,7 @@ void Print(const std::vector<float> &v) {
 
 void PrintClockDiff(const clock_t tStart, const clock_t tStop) {
     std::cout << "clock diff = " << tStop - tStart << '\n';
+    mClocks[currentSort] = tStop - tStart;
 }
 
 void FillVectorManual(std::vector<float> &v, const int &n, char **argv) {
@@ -57,6 +65,7 @@ float Rand() {
 void PerformSort(const std::string &sortName, const std::vector<float> &v,
         void (*sortFunc)(std::vector<float> &)) {
     std::vector<float> tmpV = v;
+    currentSort = sortName;
     std::cout << sortName << ":\n";
 
     const clock_t t1 = clock();
@@ -273,6 +282,16 @@ int main(int argc, char **argv) {
     PerformSort("QuickSort", v, [](std::vector<float> &v) { QuickSort(v, 0, v.size() - 1); });
     PerformSort("QuickSort3Way", v,
             [](std::vector<float> &v) { QuickSort3Way(v, 0, v.size() - 1); });
+
+    auto minElement = std::min_element(mClocks.begin(), mClocks.end(),
+            [](const std::pair<std::string, clock_t> &a, const std::pair<std::string, clock_t> &b) {
+                return a.second < b.second;
+            });
+
+    if (minElement != mClocks.end()) {
+        std::cout << "\nThe winner is: " << minElement->first
+                  << " with value: " << minElement->second << '\n';
+    }
 
     return 0;
 }
