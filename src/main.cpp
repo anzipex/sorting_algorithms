@@ -217,13 +217,11 @@ void QuickSort3Way(std::vector<float> &v, int left, int right) {
         return;
     }
 
-    // Улучшенный выбор случайного элемента
     std::swap(v[left], v[left + rand() % (right - left + 1)]);
     const float pivot = v[left];
 
     int lt = left, i = left + 1, gt = right;
 
-    // Трехстороннее разделение
     while (i <= gt) {
         if (v[i] < pivot) {
             std::swap(v[lt++], v[i++]);
@@ -234,7 +232,6 @@ void QuickSort3Way(std::vector<float> &v, int left, int right) {
         }
     }
 
-    // Рекурсия для левой и правой частей
     QuickSort3Way(v, left, lt - 1);
     QuickSort3Way(v, gt + 1, right);
 }
