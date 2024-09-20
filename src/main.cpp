@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 #include <ctime>
 #include <algorithm>
 
@@ -20,6 +21,7 @@ void HeapSort(std::vector<float> &v);
 void Sink(std::vector<float> &v, size_t i, size_t n);
 // =============================================================
 void QuickSort(std::vector<float> &v, int left, int right);
+void QuickSort3Way(std::vector<float> &v, int left, int right);
 
 void Print(const std::vector<float> &v) {
     for (auto x : v) {
@@ -191,6 +193,37 @@ void QuickSort(std::vector<float> &v, int left, int right) {
     QuickSort(v, i, right);
 }
 
+void QuickSort3Way(std::vector<float> &v, int left, int right) {
+    if (left >= right) {
+        return;
+    }
+
+    std::swap(v[right], v[left + rand() % (right - left + 1)]);
+
+    const float pivot = v[right];
+    int i = left;
+    int temp = left;
+    int j = right;
+
+    while (i < j) {
+        if (v[i] < pivot) {
+            std::swap(v[i++], v[temp++]);
+        } else if (v[i] == pivot) {
+            std::swap(v[i], v[--j]);
+        } else {
+            i++;
+        }
+    }
+
+    int m = std::min(j - temp, right - j + 1);
+    for (int k = 0; k < m; ++k) {
+        std::swap(v[j + k], v[right - m + 1 + k]);
+    }
+
+    QuickSort3Way(v, left, j - 1);
+    QuickSort3Way(v, right - (j - temp), right);
+}
+
 int main(int argc, char **argv) {
     srand(time(NULL));
 
@@ -214,8 +247,9 @@ int main(int argc, char **argv) {
     ShellSort(v);
     MergeSort(v, 0, v.size() - 1);
     HeapSort(v);
-#endif
     QuickSort(v, 0, static_cast<int>(v.size() - 1));
+#endif
+    QuickSort3Way(v, 0, static_cast<int>(v.size() - 1));
 
     Print(v);
 
