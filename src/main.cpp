@@ -34,7 +34,7 @@ void Print(const std::vector<float> &v) {
     std::cout << '\n';
 }
 
-void PrintClockDiff(clock_t tStart, clock_t tStop) {
+void PrintClockDiff(const clock_t tStart, const clock_t tStop) {
     std::cout << "clock diff = " << tStop - tStart << '\n';
 }
 
