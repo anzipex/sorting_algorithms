@@ -9,7 +9,7 @@ void FillVectorManual(std::vector<float> &v, const int &n, char **argv);
 void FillVectorRand(std::vector<float> &v, const size_t &n);
 float Rand();
 
-void PerformSort(const std::string &sortName, std::vector<float> &v,
+void PerformSort(const std::string &sortName, const std::vector<float> &v,
         void (*sortFunc)(std::vector<float> &));
 
 void InsertionSort(std::vector<float> &v);
@@ -49,7 +49,7 @@ float Rand() {
     return static_cast<float>(rand()) / static_cast<float>(rand());
 }
 
-void PerformSort(const std::string &sortName, std::vector<float> &v,
+void PerformSort(const std::string &sortName, const std::vector<float> &v,
         void (*sortFunc)(std::vector<float> &)) {
     std::vector<float> tmpV = v;
     std::cout << sortName << ":\n";
