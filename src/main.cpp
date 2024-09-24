@@ -7,7 +7,6 @@
 #include <thread>
 #include <mutex>
 #include <cctype>
-#include <stdexcept>
 
 #include "random.h"
 #include "insertion.h"
