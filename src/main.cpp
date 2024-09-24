@@ -8,7 +8,9 @@
 #include <thread>
 #include <mutex>
 
-std::mutex coutMutex;  // Мьютекс для синхронизации вывода
+namespace{
+std::mutex CoutMutex; // synchronizing output
+}
 
 void Print(const std::vector<float> &v);
 void FillVectorManual(std::vector<float> &v, const int &n, char **argv);
@@ -69,7 +71,7 @@ void PerformSort(const std::string &sortName, const std::vector<float> &v,
 
     const bool sorted = std::is_sorted(tmpV.begin(), tmpV.end());
 
-    std::lock_guard<std::mutex> lock(coutMutex);
+    std::lock_guard<std::mutex> lock(CoutMutex);
     mClocks[sortName] = t2 - t1;
     std::cout << sortName << ": cpu_time = " << t2 - t1 << '\n';
 
@@ -121,7 +123,7 @@ void BubbleSort(std::vector<float> &v) {
 void ShellSort(std::vector<float> &v) {
     size_t h = 1;
     while (h < v.size() / 3) {
-        h = 3 * h + 1; // последовательность Кнута
+        h = 3 * h + 1; // Knuth sequence
     }
 
     while (h >= 1) {
