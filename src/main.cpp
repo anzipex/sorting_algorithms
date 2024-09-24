@@ -5,9 +5,12 @@
 #include <ctime>
 #include <algorithm>
 #include <string>
+#include <thread>
+#include <mutex>
+
+std::mutex coutMutex;  // Мьютекс для синхронизации вывода
 
 void Print(const std::vector<float> &v);
-void PrintClockDiff(clock_t tStart, clock_t tStop);
 void FillVectorManual(std::vector<float> &v, const int &n, char **argv);
 void FillVectorRand(std::vector<float> &v, const size_t &n);
 float Rand();
@@ -30,7 +33,6 @@ void QuickSort(std::vector<float> &v, int left, int right);
 void QuickSort3Way(std::vector<float> &v, int left, int right);
 
 namespace {
-std::string currentSort = "";
 std::map<std::string, clock_t> mClocks;
 }
 
@@ -39,11 +41,6 @@ void Print(const std::vector<float> &v) {
         std::cout << x << " ";
     }
     std::cout << '\n';
-}
-
-void PrintClockDiff(const clock_t tStart, const clock_t tStop) {
-    std::cout << "clock diff = " << tStop - tStart << '\n';
-    mClocks[currentSort] = tStop - tStart;
 }
 
 void FillVectorManual(std::vector<float> &v, const int &n, char **argv) {
@@ -65,15 +62,17 @@ float Rand() {
 void PerformSort(const std::string &sortName, const std::vector<float> &v,
         void (*sortFunc)(std::vector<float> &)) {
     std::vector<float> tmpV = v;
-    currentSort = sortName;
-    std::cout << sortName << ":\n";
 
     const clock_t t1 = clock();
     sortFunc(tmpV);
     const clock_t t2 = clock();
-    PrintClockDiff(t1, t2);
 
     const bool sorted = std::is_sorted(tmpV.begin(), tmpV.end());
+
+    std::lock_guard<std::mutex> lock(coutMutex);
+    mClocks[sortName] = t2 - t1;
+    std::cout << sortName << ": cpu_time = " << t2 - t1 << '\n';
+
     if (!sorted) {
         std::cout << "Error! " << sortName << " is unsorted!" << "\n";
     }
@@ -273,15 +272,23 @@ int main(int argc, char **argv) {
 
     //Print(v);
 
-    PerformSort("InsertionSort", v, InsertionSort);
-    PerformSort("SelectionSort", v, SelectionSort);
-    PerformSort("BubbleSort", v, BubbleSort);
-    PerformSort("ShellSort", v, ShellSort);
-    PerformSort("MergeSort", v, [](std::vector<float> &v) { MergeSort(v, 0, v.size() - 1); });
-    PerformSort("HeapSort", v, HeapSort);
-    PerformSort("QuickSort", v, [](std::vector<float> &v) { QuickSort(v, 0, v.size() - 1); });
-    PerformSort("QuickSort3Way", v,
-            [](std::vector<float> &v) { QuickSort3Way(v, 0, v.size() - 1); });
+    std::thread insertionThread(PerformSort, "InsertionSort", v, InsertionSort);
+    std::thread selectionThread(PerformSort, "SelectionSort", v, SelectionSort);
+    std::thread bubbleThread(PerformSort, "BubbleSort", v, BubbleSort);
+    std::thread shellThread(PerformSort, "ShellSort", v, ShellSort);
+    std::thread mergeThread(PerformSort, "MergeSort", v, [](std::vector<float> &v) { MergeSort(v, 0, v.size() - 1); });
+    std::thread heapThread(PerformSort, "HeapSort", v, HeapSort);
+    std::thread quickThread(PerformSort, "QuickSort", v, [](std::vector<float> &v) { QuickSort(v, 0, v.size() - 1); });
+    std::thread quick3WayThread(PerformSort, "QuickSort3Way", v, [](std::vector<float> &v) { QuickSort3Way(v, 0, v.size() - 1); });
+
+    insertionThread.join();
+    selectionThread.join();
+    bubbleThread.join();
+    shellThread.join();
+    mergeThread.join();
+    heapThread.join();
+    quickThread.join();
+    quick3WayThread.join();
 
     auto minElement = std::min_element(mClocks.begin(), mClocks.end(),
             [](const std::pair<std::string, clock_t> &a, const std::pair<std::string, clock_t> &b) {
@@ -289,8 +296,8 @@ int main(int argc, char **argv) {
             });
 
     if (minElement != mClocks.end()) {
-        std::cout << "\nThe winner is: " << minElement->first
-                  << " with value: " << minElement->second << '\n';
+        std::cout << "\nThe fastest sort is:\n" << minElement->first
+                  << ": cpu_time = " << minElement->second << '\n';
     }
 
     return 0;
