@@ -134,8 +134,6 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    Print(v); std::cout << '\n';
-
     std::thread insertionThread(PerformSort, "InsertionSort", v, InsertionSort);
     std::thread selectionThread(PerformSort, "SelectionSort", v, SelectionSort);
     std::thread bubbleThread(PerformSort, "BubbleSort", v, BubbleSort);
@@ -166,6 +164,8 @@ int main(int argc, char **argv) {
         std::cout << "\nThe fastest sort for now is:\n"
                   << minElement->first << ": cpu_time = " << minElement->second << '\n';
     }
+
+    std::cout << '\n'; Print(v);
 
     return 0;
 }
