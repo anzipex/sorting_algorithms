@@ -8,10 +8,10 @@
 #include <thread>
 #include <mutex>
 
-namespace{
+namespace {
 std::mutex outputMutex; // synchronizing output
 std::map<std::string, clock_t> stats;
-}
+} // namespace
 
 int RandInt();
 float RandFloat();
@@ -82,7 +82,8 @@ void PerformSort(const std::string &sortName, const std::vector<float> &v,
     std::cout << sortName << ": cpu_time = " << cpuTime << '\n';
 
     if (!sorted) {
-        std::cout << "Error! " << sortName << " is unsorted!" << "\n";
+        std::cout << "Error! " << sortName << " is unsorted!"
+                  << "\n";
     }
 }
 
@@ -268,7 +269,6 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-
     std::vector<float> v;
     if (argc == minArgs) {
         FillVectorRandFloat(v, std::stoi(argv[1]));
@@ -310,8 +310,8 @@ int main(int argc, char **argv) {
             });
 
     if (minElement != stats.end()) {
-        std::cout << "\nThe fastest sort for now is:\n" << minElement->first
-                  << ": cpu_time = " << minElement->second << '\n';
+        std::cout << "\nThe fastest sort for now is:\n"
+                  << minElement->first << ": cpu_time = " << minElement->second << '\n';
     }
 
     return 0;
