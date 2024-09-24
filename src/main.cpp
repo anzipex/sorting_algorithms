@@ -165,6 +165,7 @@ int main(int argc, char **argv) {
                   << minElement->first << ": cpu_time = " << minElement->second << '\n';
     }
 
+    std::sort(v.begin(), v.end());
     std::cout << '\n'; Print(v);
 
     return 0;
