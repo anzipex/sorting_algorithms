@@ -63,7 +63,7 @@ void PerformSort(const std::string &sortName, const std::vector<float> &v,
     std::cout << sortName << ": cpu_time = " << cpuTime << '\n';
 
     if (!sorted) {
-        std::cout << "Error! " << sortName << " is unsorted!"
+        std::cout << "Error: " << sortName << " is unsorted!"
                   << "\n";
     }
 }
