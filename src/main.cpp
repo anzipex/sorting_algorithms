@@ -6,6 +6,8 @@
 #include <string>
 #include <thread>
 #include <mutex>
+#include <cctype>
+#include <stdexcept>
 
 #include "random.h"
 #include "insertion.h"
@@ -22,11 +24,58 @@ std::mutex outputMutex; // synchronizing output
 std::map<std::string, clock_t> stats; // names and cpu times
 } // namespace
 
+bool CheckArguments(int argc, char **argv);
+bool IsValidNumber(const std::string &str);
 void Print(const std::vector<float> &v);
 void FillVectorManualFloat(std::vector<float> &v, const int &n, char **argv);
 void FillVectorRandFloat(std::vector<float> &v, const size_t &n);
 void PerformSort(const std::string &sortName, const std::vector<float> &v,
         void (*sortFunc)(std::vector<float> &));
+
+
+bool CheckArguments(const int argc, char **argv) {
+    const int minArgs = 2;
+    if (argc < minArgs) {
+        std::cerr << "Error: Not enough arguments. Expected at least " << minArgs - 1 << " argument(s).\n";
+        return false;
+    }
+
+    for (int i = 1; i < argc; ++i) {
+        if (!IsValidNumber(argv[i])) {
+            std::cerr << "Error: The argument " << i << " must be a valid number.\n";
+            return false;
+        }
+    }
+
+    if (argc == minArgs && std::stof(argv[1]) < 0) {
+        std::cerr << "Error: The first argument must be a non-negative number.\n";
+        return false;
+    }
+
+    return true;
+}
+
+bool IsValidNumber(const std::string &str) {
+    bool hasDecimalPoint = false;
+    uint64_t start = 0;
+
+    if (str[start] == '-' || str[start] == '+') {
+        start++;
+    }
+
+    for (uint64_t i = start; i < str.size(); ++i) {
+        if (str[i] == '.') {
+            if (hasDecimalPoint) {
+                return false;
+            }
+            hasDecimalPoint = true;
+        } else if (std::isdigit(str[i]) == 0) {
+            return false;
+        }
+    }
+
+    return start < str.size();
+}
 
 void Print(const std::vector<float> &v) {
     for (auto el : v) {
@@ -69,19 +118,12 @@ void PerformSort(const std::string &sortName, const std::vector<float> &v,
 }
 
 int main(int argc, char **argv) {
-    const int minArgs = 2;
-    if (argc < minArgs) {
-        std::cerr << "Error: Not enough arguments. Expected at least " << minArgs - 1
-                  << " argument(s).\n";
-        return 1;
-    }
-    if (std::stof(argv[1]) < 0) {
-        std::cerr << "Error: The first argument must be a non-negative number.\n";
+    if (!CheckArguments(argc, argv)) {
         return 1;
     }
 
     std::vector<float> v;
-    if (argc == minArgs) {
+    if (argc == 2) {
         FillVectorRandFloat(v, std::stoi(argv[1]));
     } else {
         FillVectorManualFloat(v, argc - 1, argv);
