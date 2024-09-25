@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cctype>
 #include <ctime>
 #include <algorithm>
 #include <map>
@@ -6,7 +7,6 @@
 #include <string>
 #include <thread>
 #include <mutex>
-#include <cctype>
 
 #include "random.h"
 #include "insertion.h"

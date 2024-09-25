@@ -5,16 +5,16 @@ void QuickSort(std::vector<float> &v, int left, int right) {
         return;
     }
 
-    float p = v[(left + right) / 2];
+    float pivot = v[(left + right) / 2];
 
     int i = left;
     int j = right;
 
     while (i <= j) {
-        while (v[i] < p) {
+        while (v[i] < pivot) {
             i++;
         }
-        while (v[j] > p) {
+        while (v[j] > pivot) {
             j--;
         }
 
@@ -24,6 +24,7 @@ void QuickSort(std::vector<float> &v, int left, int right) {
             j--;
         }
     }
+
     QuickSort(v, left, j);
     QuickSort(v, i, right);
 }
